@@ -388,7 +388,10 @@ export class SlackMessageAdapter {
       // if the action constraint is specified, only continue if it matches
       if (constraints.handlerType === StoredConstraintsType.Action) {
         // a payload that represents an action either has actions, submission, or message defined
-        if (!(payload.actions || payload.submission || payload.message)) {
+        // PATCH: The view_submission action type for responding to modal submissions
+        // fails this check. Allow payload.view to let this action through fixes this.
+        // https://github.com/slackapi/node-slack-sdk/pull/874
+        if (!(payload.actions || payload.submission || payload.message || payload.view)) {
           return false;
         }
 
